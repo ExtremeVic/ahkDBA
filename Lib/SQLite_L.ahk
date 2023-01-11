@@ -605,8 +605,10 @@ SQLite_SQLiteExe(DBFile, Commands, ByRef Output) {
          Return False
       }
    }
+
    if !InStr(Commands, ".output stdout")
       Commands := ".output stdout`n" . Commands
+   
    FileAppend, %Commands%, %InputFile%, UTF-8-RAW
    if (ErrorLevel) {
       SQLite_LastError("ERROR: Unable to create " . InputFile . "!")

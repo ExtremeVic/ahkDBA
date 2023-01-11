@@ -1,13 +1,31 @@
 ﻿#NoEnv
 #Warn, LocalSameAsGlobal, Off
+
+
+
+if (A_IsCompiled) {
+	SetWorkingDir, C:\Users\vicar\Documents\GitHub\ahkDBA
+	
+}
+
+else {
+	SetWorkingDir %A_scriptdir%
+
+}
+
+
+
+
+#Include %A_scriptDir%
+
 SetWorkingDir %A_ScriptDir% 
 #Include <DBA>
 
-global initialSQL := "SELECT * FROM Test"
+global initialSQL := "SELECT * FROM cabinets"
 global databaseType := ""
 global currentDB := null ; current db connection
 
-connectionStrings := A_ScriptDir "\Test\TestDB.sqlite||Server=localhost;Port=3306;Database=test;Uid=root;Pwd=toor;|Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" A_ScriptDir "\Test\TestDB.mdb"
+connectionStrings := A_ScriptDir "\Test\example.db||Server=localhost;Port=3306;Database=test;Uid=root;Pwd=toor;|Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" A_ScriptDir "\Test\TestDB.mdb"
 
 Gui, +LastFound +OwnDialogs
 Gui, Margin, 10, 10
@@ -38,7 +56,10 @@ return
 
 
 
+
+
 ReConnect:
+	;msgbox % SQLite_DLLPath()
 	Gui, submit, NoHide
 	DoTestInserts := true
 	
@@ -47,10 +68,11 @@ ReConnect:
 
 	try {
 		currentDB := DBA.DataBaseFactory.OpenDataBase(databaseType, connectionString)
-		
+		;msgbox % databaseType connectionString
 		if(DoTestInserts)
 		{
 			try {
+				
 				if(databaseType = "SQLite"){
 					CreateTestDataSQLite(currentDB)
 				}else if(databaseType = "mySQL"){
@@ -60,6 +82,7 @@ ReConnect:
 				MsgBox,16, Error, % "Failed to create Test Data.`n`n" ExceptionDetail(e)
 		}
 	} catch e
+		listvars
 		MsgBox,16, Error, % "Failed to create connection. Check your Connection string and DB Settings!`n`n" ExceptionDetail(e)
 
 
